@@ -50,7 +50,7 @@ format.
 
 ## Models
 
-Each model is given an input sequence and a target sequence, specified by the options parameters ```--input_seq``` and ```--target_seq```. These parameters are patterns used by the dataloader to create inputs and targets. For example, from ```--input_seq 1 3 --target-seq 8 ``` the dataloader will return all triplets ```[1, 3 -> 8], [2, 4 -> 9], ..., [93, 95 -> 100]``` from every videos, in batches specified by option parameter ```--bsz```. 
+Each model is given an input sequence and a target sequence, specified by the options parameters ```--input_seq``` and ```--target_seq```. These parameters are patterns used by the dataloader to create inputs and targets. For example, from ```--input_seq 1 3 --target_seq 8 ``` the dataloader will return all triplets ```[1, 3 -> 8], [2, 4 -> 9], ..., [93, 95 -> 100]``` from every videos, in batches specified by option parameter ```--bsz```. 
 
 Three models:
 
