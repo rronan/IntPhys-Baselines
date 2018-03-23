@@ -62,7 +62,7 @@ linear_rnn: recurrent neural network applied to an encoded representation of a f
 
 ## Dataloader
 
-The dataloader uses a .npy lists containing absolute paths to all videos. Scripts makeList_train.py and makeList_test.py create those lists.
+The dataloader uses a .npy lists containing absolute paths to all videos. Scripts ```makeList_train.py``` and ```makeList_test.py``` create those lists.
 
 ## Train
 
