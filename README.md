@@ -19,18 +19,11 @@ Train samples are always physically possible and have high variability
 <img src="examples/train_1.gif" width="150"> <img src="examples/train_2.gif" width="150"> <img src="examples/train_3.gif" width="150"> <img src="examples/train_4.gif" width="150">
 
 
-#### Test samples ####
+#### Test and Dev samples ####
 
-Test samples have a constrained variability and come as quadruplets: 2 possibles cases and 2 impossibles ones
+Test and Dev samples have a constrained variability and come as quadruplets: 2 possibles cases and 2 impossibles ones
 
 <img src="examples/test_1.gif" width="150"> <img src="examples/test_2.gif" width="150"> <img src="examples/test_3.gif" width="150"> <img src="examples/test_4.gif" width="150">
-
-
-#### Dev samples ####
-
-Train samples are always physically possible and have high variability
-
-<img src="examples/train_1.gif" width="150"> <img src="examples/train_2.gif" width="150"> <img src="examples/train_3.gif" width="150"> <img src="examples/train_4.gif" width="150">
 
 
 #### Metadata ####
