@@ -71,12 +71,12 @@ python train.py --verbose --image_save --model Resnet_ae --input scene --target 
 
 Train a GAN model:
 ```
-python train.py --verbose --image_save --input scene --model GAN --target mask --input_seq 1 3 --target_seq 8
+python train.py --verbose --image_save --input scene --model Gan --target mask --input_seq 1 3 --target_seq 8
 ```
 
 Train a GAN on a predicted mask instead of a mask (so that test is done on raw videos):
 ```
-python train.py --verbose --image_save --model GAN --input scene --target scene --input_seq 1 3 --target_seq 8 --maskPredictor path/to/trained/maskPredictor.pth
+python train.py --verbose --image_save --model Gan --input scene --target scene --input_seq 1 3 --target_seq 8 --maskPredictor path/to/trained/maskPredictor.pth
 ```
 
 For GPU usage, add option ```--gpu```.
