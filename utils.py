@@ -2,7 +2,7 @@ import json
 import random
 import os
 import torch
-import visdom
+#import visdom
 import time
 import sys
 import numpy as np
@@ -100,7 +100,7 @@ def to_number(d):
     for key, value in d.items():
         try:
             out[key] = value.data[0]
-        except AttributeError:
+        except RuntimeError:
             try:
                 out[key] = value[0]
             except TypeError:

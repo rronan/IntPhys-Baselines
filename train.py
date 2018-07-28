@@ -17,6 +17,7 @@ trainLoader = torch.utils.data.DataLoader(
     num_workers=opt.nThreads,
     shuffle=True
 )
+trainLoader.count = 0
 valLoader = torch.utils.data.DataLoader(
     datasets.IntPhys(opt, 'val'),
     opt.bsz,

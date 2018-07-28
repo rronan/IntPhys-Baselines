@@ -3,20 +3,22 @@ import os
 import numpy as np
 import math
 
-def makeList(opt):
+from path import Path
+
+def make_list(args):
     video_paths = []
-    for datadir in opt.datadir:
+    for datadir in args.datadir:
         for subfolder in sorted(os.listdir(datadir)):
             path = os.path.join(datadir, subfolder)
-            if opt.pattern in path and os.path.isdir(path):
+            if args.pattern in path and os.path.isdir(path):
                 print(path)
                 video_paths.append(path)
     ntotal = len(video_paths)
     print(ntotal)
     idx = np.random.permutation(ntotal)
-    ntrain = math.floor(opt.prop_train * ntotal)
-    nval = math.floor(opt.prop_val * ntotal)
-    ntest = math.floor(opt.prop_test * ntotal)
+    ntrain = math.floor(args.prop_train * ntotal)
+    nval = math.floor(args.prop_val * ntotal)
+    ntest = math.floor(args.prop_test * ntotal)
     train, val, test = [], [], []
     for i in idx:
         x = video_paths.pop()
@@ -26,11 +28,11 @@ def makeList(opt):
             val.append(x)
         else:
             test.append(x)
-    if not os.path.isdir(opt.outdir):
-        os.mkdir(opt.outdir)
-    np.save(os.path.join(opt.outdir, opt.train_file), np.array(train))
-    np.save(os.path.join(opt.outdir, opt.val_file), np.array(val))
-    np.save(os.path.join(opt.outdir, opt.test_file), np.array(test))
+    if not os.path.isdir(args.outdir):
+        os.mkdir(args.outdir)
+    np.save(os.path.join(args.outdir, args.train_file), np.array(train))
+    np.save(os.path.join(args.outdir, args.val_file), np.array(val))
+    np.save(os.path.join(args.outdir, args.test_file), np.array(test))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -43,8 +45,8 @@ if __name__ == "__main__":
     parser.add_argument('--test_file', default='paths_test.npy')
     parser.add_argument('--datadir', nargs='+', default=[])
     parser.add_argument('--pattern', default='')
-    opt = parser.parse_args()
-    print(opt)
+    args = parser.parse_args()
+    print(args)
 
-    makeList(opt)
+    make_list(args)
 

@@ -14,7 +14,7 @@ class IntPhys(torch.utils.data.Dataset):
         self.index = 0
         self.test = split == 'test'
         if opt.list:
-            self.file = os.path.join(opt.list, split + '.npy')
+            self.file = os.path.join(opt.list, 'paths_%s.npy' %split)
             self.paths = np.load(self.file).tolist()
             count = min(opt.count, len(self.paths)) * self.opt.m
         else:
