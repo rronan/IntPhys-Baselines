@@ -16,18 +16,14 @@ def get_mask_index(filename, mask_object):
     mask_object: name of the object to get the mask index of
     """
     with open(filename) as file:
-        masks_grayscale = json.load(file)["masks_grayscale"]
+        masks_grayscale = json.load(file)["header"]["masks"]
     out = {}
     for mo in mask_object:
         out[mo] = []
-    if type(masks_grayscale) is list:
-        for m in masks_grayscale:
-            id, o = m[0], m[1]
-            for mo in mask_object:
-                if mo in o:
-                    out[mo].append(id)
-    else:
-        print('wrong format to masks_grayscale')
+    for o, idx in masks_grayscale.items():
+        for mo in mask_object:
+            if mo in o:
+                out[mo].append(idx)
     return out
 
 def checkpoint(epoch, model, log, opt):

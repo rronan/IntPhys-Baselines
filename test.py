@@ -20,23 +20,24 @@ parser.add_argument('--load', action='append',
 parser.add_argument('--opt_file', type=str)
 parser.add_argument('--list_path', type=str, default='lists/3d_test')
 parser.add_argument('--load_scores', nargs='+',  default=None)
-parser.add_argument('--list_name', nargs='+',  default=['visible_dynamic_1_nObj1', 'visible_dynamic_1_nObj2', 'visible_dynamic_1_nObj3', 'visible_dynamic_2_nObj1', 'visible_dynamic_2_nObj2', 'visible_dynamic_2_nObj3', 'visible_static_nObj1', 'visible_static_nObj2', 'visible_static_nObj3', 'occluded_dynamic_1_nObj1', 'occluded_dynamic_1_nObj2', 'occluded_dynamic_1_nObj3', 'occluded_dynamic_2_nObj1', 'occluded_dynamic_2_nObj2', 'occluded_dynamic_2_nObj3', 'occluded_static_nObj1', 'occluded_static_nObj2', 'occluded_static_nObj3'])
+parser.add_argument('--list_name', nargs='+',  default=['O1_test_occluded_dynamic_1_nobj1', 'O1_test_occluded_dynamic_1_nobj2', 'O1_test_occluded_dynamic_1_nobj3', 'O1_test_occluded_dynamic_2_nobj1', 'O1_test_occluded_dynamic_2_nobj2', 'O1_test_occluded_dynamic_2_nobj3', 'O1_test_occluded_static_nobj1', 'O1_test_occluded_static_nobj2', 'O1_test_occluded_static_nobj3', 'O1_test_visible_dynamic_1_nobj1', 'O1_test_visible_dynamic_1_nobj2', 'O1_test_visible_dynamic_1_nobj3', 'O1_test_visible_dynamic_2_nobj1', 'O1_test_visible_dynamic_2_nobj2', 'O1_test_visible_dynamic_2_nobj3', 'O1_test_visible_static_nobj1', 'O1_test_visible_static_nobj2', 'O1_test_visible_static_nobj3', 'O2_test_occluded_dynamic_1_nobj1', 'O2_test_occluded_dynamic_1_nobj2', 'O2_test_occluded_dynamic_1_nobj3', 'O2_test_occluded_dynamic_2_nobj1', 'O2_test_occluded_dynamic_2_nobj2', 'O2_test_occluded_dynamic_2_nobj3', 'O2_test_occluded_static_nobj1', 'O2_test_occluded_static_nobj2', 'O2_test_occluded_static_nobj3', 'O2_test_visible_dynamic_1_nobj1', 'O2_test_visible_dynamic_1_nobj2', 'O2_test_visible_dynamic_1_nobj3', 'O2_test_visible_dynamic_2_nobj1', 'O2_test_visible_dynamic_2_nobj2', 'O2_test_visible_dynamic_2_nobj3', 'O2_test_visible_static_nobj1', 'O2_test_visible_static_nobj2', 'O2_test_visible_static_nobj3', 'O3_test_occluded_dynamic_1_nobj1', 'O3_test_occluded_dynamic_1_nobj2', 'O3_test_occluded_dynamic_1_nobj3', 'O3_test_occluded_dynamic_2_nobj1', 'O3_test_occluded_dynamic_2_nobj2', 'O3_test_occluded_dynamic_2_nobj3', 'O3_test_occluded_static_nobj1', 'O3_test_occluded_static_nobj2', 'O3_test_occluded_static_nobj3', 'O3_test_visible_dynamic_1_nobj1', 'O3_test_visible_dynamic_1_nobj2', 'O3_test_visible_dynamic_1_nobj3', 'O3_test_visible_dynamic_2_nobj1', 'O3_test_visible_dynamic_2_nobj2', 'O3_test_visible_dynamic_2_nobj3', 'O3_test_visible_static_nobj1', 'O3_test_visible_static_nobj2', 'O3_test_visible_static_nobj3'])
 parser.add_argument('--name', default='test')
 parser.add_argument('--checkpoint', type=str, default='checkpoints/tests')
 parser.add_argument('--viz', action='store_true')
 parser.add_argument('--verbose', action='store_true')
 parser.add_argument('--image_save', action='store_true')
-parser.add_argument('--image_save_interval', type=int, default=1)
+parser.add_argument('--image_save_interval', type=int, default=5)
 parser.add_argument('--visdom', action='store_true')
 parser.add_argument('--visdom_interval', type=int, default=1)
 parser.add_argument('--manualSeed', type=int, default=1)
 parser.add_argument('--eval', action='store_true')
 parser.add_argument('--gpu', action='store_true')
-parser.add_argument('--nThreads', type=int, default=20)
+parser.add_argument('--num_workers', type=int, default=20)
 parser.add_argument('--count', type=int, default=25)
 parser.add_argument('--mask_object', nargs='+', default=['object', 'occluder'])
 opt_test = parser.parse_args()
 opt_test.name += '_' + time.strftime('%y%m%d_%H%M%S')
+opt_test.checkpoint = os.path.join(opt_test.checkpoint, opt_test.name)
 print(opt_test)
 
 random.seed(opt_test.manualSeed)
@@ -156,7 +157,7 @@ def test(list_name):
         testLoader = torch.utils.data.DataLoader(
             datasets.IntPhys(opt, 'test'),
             opt.bsz,
-            num_workers=opt_test.nThreads,
+            num_workers=opt_test.num_workers,
             shuffle=False
         )
         t0 = dt.time()
@@ -166,8 +167,8 @@ def test(list_name):
             scores_min.append(frame_scores.min(0))
         scores_mean = np.array(scores_mean)
         scores_min = np.array(scores_min)
-    np.save(os.path.join(cp_path, list_name + '_scores_min'), scores_min)
-    np.save(os.path.join(cp_path, list_name + '_scores_mean'), scores_mean)
+    np.save(os.path.join(opt_test.checkpoint, list_name + '_scores_min'), scores_min)
+    np.save(os.path.join(opt_test.checkpoint, list_name + '_scores_mean'), scores_mean)
     labels = np.ones(scores_mean.shape, dtype=bool)
     labels[:,-2:] = False
     res = {}
@@ -185,13 +186,12 @@ def test(list_name):
            res['%s(%s)' %(keyacc, keysc)] =  acc(sc, labels)
     return res
 
-cp_path = os.path.join('checkpoints/tests', opt_test.name)
-if not os.path.isdir(cp_path):
-    os.mkdir(cp_path)
+if not os.path.isdir(opt_test.checkpoint):
+    os.mkdir(opt_test.checkpoint)
 if opt_test.load:
-    with open(os.path.join(cp_path, 'opt.txt'), 'w') as f:
+    with open(os.path.join(opt_test.checkpoint, 'opt.txt'), 'w') as f:
         json.dump(vars(opt), f)
-with open(os.path.join(cp_path, 'opt_test.txt'), 'w') as f:
+with open(os.path.join(opt_test.checkpoint, 'opt_test.txt'), 'w') as f:
     json.dump(vars(opt_test), f)
 results = {}
 for list_name in opt_test.list_name:
@@ -199,7 +199,7 @@ for list_name in opt_test.list_name:
     print(list_name)
     print(res)
     results[list_name] = res
-with open(os.path.join(cp_path, 'results.txt'), 'w') as f:
+with open(os.path.join(opt_test.checkpoint, 'results.txt'), 'w') as f:
     json.dump(results, f)
 
 print('python format_table.py --results checkpoints/tests/%s/results.txt --score \'relative_acc(scores_mean)\'' %opt_test.name)

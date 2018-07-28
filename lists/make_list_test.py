@@ -11,9 +11,9 @@ parser.add_argument('--blocks', nargs='+', default=['O1_test_occluded_dynamic_1_
 parser.add_argument('--prop_train', type=float, default=0)
 parser.add_argument('--prop_val', type=float, default=0)
 parser.add_argument('--prop_test', type=float, default=1)
-parser.add_argument('--train_file', default='train.npy')
-parser.add_argument('--val_file', default='val.npy')
-parser.add_argument('--test_file', default='test.npy')
+parser.add_argument('--train_file', default='paths_train.npy')
+parser.add_argument('--val_file', default='paths_val.npy')
+parser.add_argument('--test_file', default='paths_test.npy')
 parser.add_argument('--datadir', nargs='+', default=[])
 args = parser.parse_args()
 for b in args.blocks:

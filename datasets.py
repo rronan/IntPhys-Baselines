@@ -45,9 +45,10 @@ class IntPhys(torch.utils.data.Dataset):
                 if f == 'x' or f == 'y':
                     f = random.randint(1, self.opt.n_frames) - start
                     assert not self.test
+                mode = 'L' if nc == 1 else 'RGB'
                 img = scipy.misc.imread(
                     '%s/%s/%s_%03d.png' %(v, x, x, start + f),
-                    #mode='RGB'
+                    mode=mode
                 )
                 out.append(scipy.misc.imresize(
                     img,
@@ -73,7 +74,7 @@ class IntPhys(torch.utils.data.Dataset):
                     os.path.join(video_path, str(c), 'status.json'),
                     self.opt.mask_object
                 )
-                raw_mask = loadDiff('mask', 1, start, seq, 'nearest', c)
+                raw_mask = loadDiff('masks', 1, start, seq, 'nearest', c)
                 mask = raw_mask.astype(int)
                 out = [np.ones(mask.shape, dtype=bool)]
                 for o in self.opt.mask_object:

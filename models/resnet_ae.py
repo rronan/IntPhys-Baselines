@@ -15,12 +15,12 @@ class Resnet_ae(nn.Module, Model):
         self.__name__ = 'resnet_ae'
         # define variables
         bsz = 1 if test else opt.bsz
-        if input_:
+        if input_ is not None:
             self.input = input_
         else:
             self.input = torch.FloatTensor(bsz * opt.input_len, opt.nc_in, 64, 64)
             self.input = Variable(self.input)
-        if target:
+        if target is not None:
             self.target = target
         else:
             self.target = torch.FloatTensor(bsz * opt.target_len, opt.nc_out, 64, 64)
@@ -94,7 +94,8 @@ class Resnet_ae(nn.Module, Model):
             self.maskPredictor = None
 
         # does this have to be done at the end of __init__ ?
-        self.optimizer = optim.Adam(self.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
+        if opt.lr is not None:
+            self.optimizer = optim.Adam(self.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
 
     def forward(self, x):
         x = self.resnet_features.forward(x)
@@ -139,4 +140,4 @@ class Resnet_ae(nn.Module, Model):
             self.target = self.maskPredictor(self.target).detach()
         self.out = self.forward(self.input)
         err = self.criterion.forward(self.out, self.target)
-        return 1 / err.data[0]
+        return 1 / err.data.item()
