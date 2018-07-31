@@ -202,4 +202,4 @@ for list_name in opt_test.list_name:
 with open(os.path.join(opt_test.checkpoint, 'results.txt'), 'w') as f:
     json.dump(results, f)
 
-print('python format_table.py --results checkpoints/tests/%s/results.txt --score \'relative_acc(scores_mean)\'' %opt_test.name)
+print('python paper/format_table.py --results checkpoints/tests/%s/results.txt --score \'relative_acc(scores_mean)\'' %opt_test.name)
