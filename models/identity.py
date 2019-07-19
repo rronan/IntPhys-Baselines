@@ -5,8 +5,8 @@ import utils
 
 from .model import Model
 
-class Identity(nn.Module, Model):
 
+class Identity(nn.Module, Model):
     def __init__(self, opt):
         super(Identity, self).__init__()
 

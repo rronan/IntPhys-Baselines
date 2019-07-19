@@ -5,6 +5,7 @@ import math
 
 from path import Path
 
+
 def make_list(args):
     video_paths = []
     for datadir in args.datadir:
@@ -34,19 +35,19 @@ def make_list(args):
     np.save(os.path.join(args.outdir, args.val_file), np.array(val))
     np.save(os.path.join(args.outdir, args.test_file), np.array(test))
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--outdir', default='.')
-    parser.add_argument('--prop_train', type=float, default=0.9)
-    parser.add_argument('--prop_val', type=float, default=0.1)
-    parser.add_argument('--prop_test', type=float, default=0.0)
-    parser.add_argument('--train_file', default='paths_train.npy')
-    parser.add_argument('--val_file', default='paths_val.npy')
-    parser.add_argument('--test_file', default='paths_test.npy')
-    parser.add_argument('--datadir', nargs='+', default=[])
-    parser.add_argument('--pattern', default='')
+    parser.add_argument("--outdir", default=".")
+    parser.add_argument("--prop_train", type=float, default=0.9)
+    parser.add_argument("--prop_val", type=float, default=0.1)
+    parser.add_argument("--prop_test", type=float, default=0.0)
+    parser.add_argument("--train_file", default="paths_train.npy")
+    parser.add_argument("--val_file", default="paths_val.npy")
+    parser.add_argument("--test_file", default="paths_test.npy")
+    parser.add_argument("--datadir", nargs="+", default=[])
+    parser.add_argument("--pattern", default="")
     args = parser.parse_args()
     print(args)
 
     make_list(args)
-

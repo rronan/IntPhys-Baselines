@@ -3,6 +3,7 @@ import torchvision.models
 from torch.autograd import Variable
 import torch
 
+
 class Encoder(nn.Module):
     def __init__(self, opt):
         super(Encoder, self).__init__()
@@ -13,10 +14,7 @@ class Encoder(nn.Module):
         resnet = torchvision.models.resnet18(True)
         self.resnet_features = nn.Sequential(*list(resnet.children())[:6])
         middleNL = nn.Sigmoid() if opt.middleNL else nn.Tanh()
-        self.encoder = nn.Sequential(
-            nn.Linear(128 * 8 * 8, opt.latentDim),
-            middleNL
-        )
+        self.encoder = nn.Sequential(nn.Linear(128 * 8 * 8, opt.latentDim), middleNL)
 
     def forward(self, x):
         x = self.resnet_features.forward(x)

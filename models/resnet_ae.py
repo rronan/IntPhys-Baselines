@@ -9,10 +9,11 @@ import utils
 
 from .model import Model
 
+
 class Resnet_ae(nn.Module, Model):
     def __init__(self, opt, test=False, input_=None, target=None):
         super(Resnet_ae, self).__init__()
-        self.__name__ = 'resnet_ae'
+        self.__name__ = "resnet_ae"
         # define variables
         bsz = 1 if test else opt.bsz
         if input_ is not None:
@@ -39,51 +40,46 @@ class Resnet_ae(nn.Module, Model):
         resnet = torchvision.models.resnet18(True)
         self.resnet_features = nn.Sequential(*list(resnet.children())[:6])
 
-        middleNL = nn.Sigmoid() if opt.middleNL == 'sigmoid' else nn.Tanh()
-        self.encoder = nn.Sequential(
-            nn.Linear(128 * 8 * 8, opt.latentDim),
-            middleNL
-        )
+        middleNL = nn.Sigmoid() if opt.middleNL == "sigmoid" else nn.Tanh()
+        self.encoder = nn.Sequential(nn.Linear(128 * 8 * 8, opt.latentDim), middleNL)
         self.decoder = nn.Linear(
-            opt.input_len * opt.latentDim,
-            opt.target_len * 128 * 8 * 8
+            opt.input_len * opt.latentDim, opt.target_len * 128 * 8 * 8
         )
 
         self.deconv = nn.Sequential(
-            nn.Conv2d(128,opt.nf*4, 3, 1, 1),
-            Norm(opt.nf*4),
+            nn.Conv2d(128, opt.nf * 4, 3, 1, 1),
+            Norm(opt.nf * 4),
             nn.ReLU(),
             nn.UpsamplingNearest2d(scale_factor=2),
-            nn.Conv2d(opt.nf*4,opt.nf*2, 3, 1, 1),
-            Norm(opt.nf*2),
+            nn.Conv2d(opt.nf * 4, opt.nf * 2, 3, 1, 1),
+            Norm(opt.nf * 2),
             nn.ReLU(),
             nn.UpsamplingNearest2d(scale_factor=2),
-            nn.Conv2d(opt.nf*2,opt.nf, 3, 1, 1),
+            nn.Conv2d(opt.nf * 2, opt.nf, 3, 1, 1),
             Norm(opt.nf),
             nn.ReLU(),
             nn.UpsamplingNearest2d(scale_factor=2),
             nn.Conv2d(opt.nf, opt.target_len * opt.nc_out, 3, 1, 1),
-            nn.Sigmoid()
+            nn.Sigmoid(),
         )
-
 
         # define maskPredictor
         if opt.maskPredictor:
             optmp = {
-                'frame_width': opt.frame_width,
-                'frame_height': opt.frame_height,
-                'input_len': 1,
-                'target_len': 1,
-                'nc_in': opt.nc_in,
-                'nc_out': opt.nc_out,
-                'nf': opt.nf,
-                'latentDim': 128,
-                'instanceNorm': False,
-                'middleNL': opt.middleNL,
-                'bsz': None,
-                'maskPredictor': None,
-                'lr': None,
-                'beta1': None,
+                "frame_width": opt.frame_width,
+                "frame_height": opt.frame_height,
+                "input_len": 1,
+                "target_len": 1,
+                "nc_in": opt.nc_in,
+                "nc_out": opt.nc_out,
+                "nf": opt.nf,
+                "latentDim": 128,
+                "instanceNorm": False,
+                "middleNL": opt.middleNL,
+                "bsz": None,
+                "maskPredictor": None,
+                "lr": None,
+                "beta1": None,
             }
             optmp = utils.to_namespace(optmp)
             self.maskPredictor = Resnet_ae(
@@ -95,7 +91,9 @@ class Resnet_ae(nn.Module, Model):
 
         # does this have to be done at the end of __init__ ?
         if opt.lr is not None:
-            self.optimizer = optim.Adam(self.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
+            self.optimizer = optim.Adam(
+                self.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999)
+            )
 
     def forward(self, x):
         x = self.resnet_features.forward(x)
@@ -123,11 +121,11 @@ class Resnet_ae(nn.Module, Model):
             self.target = self.maskPredictor(self.target).detach()
         self.out = self.forward(self.input)
         err = self.criterion.forward(self.out, self.target)
-        if set_ == 'train':
+        if set_ == "train":
             self.zero_grad()
             err.backward()
             self.optimizer.step()
-        return {'err': err.data[0]}
+        return {"err": err.data[0]}
 
     def output(self):
         d1, d2, d3 = self.out.size(1), self.out.size(2), self.out.size(3)

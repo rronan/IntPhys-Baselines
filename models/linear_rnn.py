@@ -10,10 +10,11 @@ from .decoder import Decoder
 from .model import Model
 import utils
 
+
 class Linear_rnn(nn.Module, Model):
     def __init__(self, opt, test=False):
         super(Linear_rnn, self).__init__()
-        self.__name__ = 'linear_rnn'
+        self.__name__ = "linear_rnn"
         self.input_len, self.target_len = opt.input_len, opt.target_len
         self.latentDim = opt.latentDim
         self.bsz = 1 if test else opt.bsz
@@ -22,21 +23,18 @@ class Linear_rnn(nn.Module, Model):
         self.target = torch.FloatTensor(opt.bsz * opt.target_len, opt.nc_out, 64, 64)
         self.target = Variable(self.target)
         self.h0 = Variable(torch.randn(opt.n_layer, 1, opt.n_hidden))
-        if opt.rnn == 'LSTM':
-            self.h0 = (
-                self.h0,
-                Variable(torch.randn(opt.n_layer, 1, opt.n_hidden))
-            )
+        if opt.rnn == "LSTM":
+            self.h0 = (self.h0, Variable(torch.randn(opt.n_layer, 1, opt.n_hidden)))
 
         self.criterion = nn.MSELoss()
-        self.recurrent_module = locate('torch.nn.%s' %opt.rnn)(
-            opt.latentDim,
-            opt.n_hidden,
-            opt.n_layer
+        self.recurrent_module = locate("torch.nn.%s" % opt.rnn)(
+            opt.latentDim, opt.n_hidden, opt.n_layer
         )
 
         # does this must be done at the end of __init__ ?
-        self.optimizer = optim.Adam(self.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
+        self.optimizer = optim.Adam(
+            self.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999)
+        )
 
         # def encoder and decoder as volatile
         self.encoder = Encoder(opt)
@@ -65,11 +63,11 @@ class Linear_rnn(nn.Module, Model):
         y = y.view(-1, self.input_len, self.latentDim)
         self.out, _ = self.forward(x, self.h0)
         err = self.criterion.forward(self.out, y)
-        if set_ == 'train':
+        if set_ == "train":
             self.zero_grad()
             err.backward()
             self.optimizer.step()
-        return {'err': err.data[0]}
+        return {"err": err.data[0]}
 
     def output(self):
         out = self.decoder(self.out.view(-1, self.latentDim)).data
@@ -80,34 +78,28 @@ class Linear_rnn(nn.Module, Model):
         for e in d:
             if e[0] == self.__name__:
                 path = d[0][-1]
-                print('loading %s: %s' %(self.__name__, path))
+                print("loading %s: %s" % (self.__name__, path))
                 self.recurrent_module.load_state_dict(torch.load(path))
-            if e[0] == 'encoder':
+            if e[0] == "encoder":
                 path = d[0][-1]
-                print('loading encoder: %s' %path)
+                print("loading encoder: %s" % path)
                 self.encoder.load_state_dict(
-                    utils.filter(
-                        torch.load(path),
-                        ['resnet_features', 'encoder']
-                    )
+                    utils.filter(torch.load(path), ["resnet_features", "encoder"])
                 )
-            if e[0] == 'decoder':
+            if e[0] == "decoder":
                 path = d[0][-1]
-                print('loading decoder: %s' %path)
+                print("loading decoder: %s" % path)
                 self.decoder.load_state_dict(
-                    utils.filter(
-                        torch.load(path),
-                        ['decoder', 'deconv']
-                    )
+                    utils.filter(torch.load(path), ["decoder", "deconv"])
                 )
 
     def save(self, path, epoch):
-        f = open(os.path.join(path, '%s.txt' %self.__name__), 'w')
+        f = open(os.path.join(path, "%s.txt" % self.__name__), "w")
         f.write(str(self))
         f.close()
         torch.save(
             self.recurrent_module.state_dict(),
-            os.path.join(path, '%s_%d.pth' %(self.__name__, epoch))
+            os.path.join(path, "%s_%d.pth" % (self.__name__, epoch)),
         )
 
     def score():

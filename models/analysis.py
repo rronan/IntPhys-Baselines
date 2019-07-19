@@ -5,8 +5,8 @@ import utils
 
 from .model import Model
 
-class Analysis(nn.Module, Model):
 
+class Analysis(nn.Module, Model):
     def __init__(self, opt):
         super(Analysis, self).__init__()
         # define variables
@@ -32,17 +32,21 @@ class Analysis(nn.Module, Model):
         self.bn_de.apply(utils.enableBNRunningMeanStd)
         print(self.bn.running_var.size())
         print(self.bn.running_mean.size())
-        print('bn mean/var')
+        print("bn mean/var")
         print(self.bn.running_mean)
         print(self.bn.running_var)
-        print('bn_de mean/var')
+        print("bn_de mean/var")
         print(self.bn_de.running_mean)
         print(self.bn_de.running_var)
         self.target.data.copy_(batch[1])
         self.out = self.forward(self.input)
-        res = {'input_mean': batch[0].mean(), 'target_mean': batch[1].float().mean(),
-            'input_min': batch[0].min(), 'target_min': batch[1].min(),
-            'input_max': batch[0].max(), 'target_max': batch[1].max(),
+        res = {
+            "input_mean": batch[0].mean(),
+            "target_mean": batch[1].float().mean(),
+            "input_min": batch[0].min(),
+            "target_min": batch[1].min(),
+            "input_max": batch[0].max(),
+            "target_max": batch[1].max(),
         }
         return utils.to_number(res)
 
